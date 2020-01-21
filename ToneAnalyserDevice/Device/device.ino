@@ -12,8 +12,6 @@
 #define LOOP_DELAY 100
 #define PULL_TIMEOUT 30000
 #define AUDIO_BUFFER_SIZE ((32000 * MAX_RECORD_DURATION) - 16000 + 44 + 1)
-
-#define APP_VERSION "ver=2.0"
 #define ERROR_INFO "Sorry, I can't \r\nhear you."
 
 enum STATUS
@@ -137,7 +135,7 @@ static void ResultMessageCallback(const char *text, int length)
   temp[end] = '\0';
   Screen.print(1, "Tone: ");
   Screen.print(2, temp, true);
-  LogTrace("DevKitToneAnalyzerSucceed", APP_VERSION);
+  LogTrace("DevKitToneAnalyzerSucceed");
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -281,7 +279,7 @@ void setup()
   {
     return;
   }
-  LogTrace("DevKitToneAnalyzerSetup", APP_VERSION);
+  LogTrace("DevKitToneAnalyzerSetup");
   
   DevKitMQTTClient_SetMessageCallback(ResultMessageCallback);
 
