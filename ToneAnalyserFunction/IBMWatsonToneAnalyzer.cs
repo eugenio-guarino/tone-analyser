@@ -5,17 +5,25 @@ using IBM.Watson.ToneAnalyzer.v3.Model;
 
 namespace ToneAnalyserFunction
 {
-    class IBMWatsonToneAnalyzer : SentimentAnalysisService
+    public class IBMWatsonToneAnalyzer
     {
-        public override string ApiKey { get; set; }
-        public override string ApiEndpoint { get; set; }
 
-        public override string AnalyseText(string text)
+        readonly string key;
+        readonly string endpoint;
+
+        public IBMWatsonToneAnalyzer(string ApiKey, string ApiEndpoint)
         {
-            IamAuthenticator authenticator = new IamAuthenticator(apikey: ApiKey);
+            this.key = ApiKey;
+            this.endpoint = ApiEndpoint;
+
+        }
+
+        public string AnalyseText(string text)
+        {
+            IamAuthenticator authenticator = new IamAuthenticator(apikey: key);
 
             ToneAnalyzerService toneAnalyzer = new ToneAnalyzerService("2017-09-21", authenticator);
-            toneAnalyzer.SetServiceUrl(ApiEndpoint);
+            toneAnalyzer.SetServiceUrl(endpoint);
 
             ToneInput toneInput = new ToneInput()
             {
