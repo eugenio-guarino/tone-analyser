@@ -1,24 +1,21 @@
-﻿using System;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
-using Microsoft.CognitiveServices.Speech;
 using Newtonsoft.Json;
 
 namespace ToneAnalyserFunction
 {
-    class MicrosoftSentimentAnalysis
+    class SentimentAnalysisCognitiveService : TextAnalyticsService
     {
         readonly string subscriptionKey;
         readonly string endpoint;
 
-        public MicrosoftSentimentAnalysis(string speechSubscriptionKey, string endpoint)
+        public SentimentAnalysisCognitiveService(string speechSubscriptionKey, string endpoint)
         {
             this.subscriptionKey = speechSubscriptionKey;
             this.endpoint = endpoint;
         }
 
-        public string AnalyseText(string text)
+        public override string AnalyseText(string text)
         {
             HttpClient client = new HttpClient();
 

@@ -4,37 +4,43 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace ToneAnalyserFunction
 {
     public static class TextAnalyser
     {
         [FunctionName("TextAnalyser")]
-        public static IActionResult Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
-            ILogger log)
+        public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req, ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            string service = req.Query["service"];
-            string text = req.Query["text"];
+            const string speechSubscriptionKey = "";
+            const string speechServiceRegion = "";
 
-            SentimentAnalysisService textAnalyticsService = null;
+            const string IBMWatsonToneAnalyzerApiKey = "";
+            const string IBMWatsonToneAnalyzerApiEndpoint = "";
 
-            if (service == "TextAnalytics")
+            const string MicrosoftSentimentAnalysisApiKey = "";
+            const string MicrosoftSentimentAnalysisApiEndpoint = "";
+
+            string serviceSelected = req.Query["service"];
+
+            SpeechCognitiveService speechService = new SpeechCognitiveService(speechSubscriptionKey, speechServiceRegion);
+            string textToAnalyse = await speechService.RecognizeSpeechAsync(req.Body, log);
+
+            TextAnalyticsService textAnalyticsService = null;
+
+            if (serviceSelected == "TextAnalytics")
             {
-
+                textAnalyticsService = new SentimentAnalysisCognitiveService(MicrosoftSentimentAnalysisApiKey, MicrosoftSentimentAnalysisApiEndpoint);
             }
-            else if (service == "WatsonAnalyser")
+            else
             {
-                textAnalyticsService = new IBMWatsonToneAnalyzer
-                {
-                    ApiKey = "",
-                    ApiEndpoint = ""
-                };
+                textAnalyticsService = new IBMWatsonToneAnalyzer(IBMWatsonToneAnalyzerApiKey, IBMWatsonToneAnalyzerApiEndpoint);
             }
 
-            string requestBody = textAnalyticsService.AnalyseText(text);
+            string requestBody = textAnalyticsService.AnalyseText(textToAnalyse);
             dynamic data = JsonConvert.DeserializeObject(requestBody);
 
             return data != null

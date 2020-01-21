@@ -8,12 +8,12 @@ using Microsoft.Extensions.Logging;
 
 namespace ToneAnalyserFunction
 {
-    public class SpeechRecognizerService
+    public class SpeechCognitiveService
     {
         readonly string subscriptionKey;
         readonly string region;
 
-        public SpeechRecognizerService(string speechSubscriptionKey, string serviceRegion)
+        public SpeechCognitiveService(string speechSubscriptionKey, string serviceRegion)
         {
             this.subscriptionKey = speechSubscriptionKey;
             this.region = serviceRegion;

@@ -5,7 +5,7 @@ using IBM.Watson.ToneAnalyzer.v3.Model;
 
 namespace ToneAnalyserFunction
 {
-    public class IBMWatsonToneAnalyzer
+    public class IBMWatsonToneAnalyzer : TextAnalyticsService
     {
 
         readonly string key;
@@ -18,7 +18,7 @@ namespace ToneAnalyserFunction
 
         }
 
-        public string AnalyseText(string text)
+        public override string AnalyseText(string text)
         {
             IamAuthenticator authenticator = new IamAuthenticator(apikey: key);
 
