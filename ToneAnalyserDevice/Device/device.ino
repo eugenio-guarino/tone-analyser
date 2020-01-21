@@ -82,7 +82,7 @@ static int HttpTriggerAnalyzer(const char *content, int length)
     return -1;
   }
 
-  sprintf(azureFunctionUri, "%s&&source=%s", (char *)AZURE_FUNCTION_URL, allServices;
+  sprintf(azureFunctionUri, "%s&&source=%s", (char *)AZURE_FUNCTION_URL, allServices);
   HTTPClient client = HTTPClient(HTTP_POST, azureFunctionUri);
   client.set_header("source", allServices);
   const Http_Response *response = client.send(content, length);
