@@ -18,8 +18,6 @@ namespace ToneAnalyserFunction
 
             string service = req.Query["service"];
             string text = req.Query["text"];
-            string apiKey = req.Query["apiKey"];
-            string apiEndpoint = req.Query["apiEndpoint"];
 
             SentimentAnalysisService textAnalyticsService = null;
 
@@ -31,8 +29,8 @@ namespace ToneAnalyserFunction
             {
                 textAnalyticsService = new IBMWatsonToneAnalyzer
                 {
-                    ApiKey = apiKey,
-                    ApiEndpoint = apiEndpoint
+                    ApiKey = "",
+                    ApiEndpoint = ""
                 };
             }
 
