@@ -26,11 +26,12 @@ namespace ToneAnalyserFunction
 
             string serviceSelected = req.Query["service"];
 
+            // Do speech-to-text conversion
             SpeechCognitiveService speechService = new SpeechCognitiveService(speechSubscriptionKey, speechServiceRegion);
             string textToAnalyse = await speechService.RecognizeSpeechAsync(req.Body, log);
 
-            TextAnalyticsService textAnalyticsService = null;
-
+            // Choose which text analytics service to use
+            TextAnalyticsService textAnalyticsService;
             if (serviceSelected == "TextAnalytics")
             {
                 textAnalyticsService = new SentimentAnalysisCognitiveService(MicrosoftSentimentAnalysisApiKey, MicrosoftSentimentAnalysisApiEndpoint);
@@ -45,7 +46,7 @@ namespace ToneAnalyserFunction
 
             return data != null
                 ? (ActionResult)new OkObjectResult($"{data}")
-                : new BadRequestObjectResult("Choose either 'WatsonAnalyser' or 'TextAnalytics' for the service query string value.");
+                : new BadRequestObjectResult("Whoops, something went wrong!");
         }
     }
 }
