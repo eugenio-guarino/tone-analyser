@@ -2,6 +2,7 @@
 #include "AZ3166WiFi.h"
 #include "DevKitMQTTClient.h"
 #include "OledDisplay.h"
+#include "AzureIotHub.h"
 #include "SystemTickCounter.h"
 #include "http_client.h"
 
@@ -44,6 +45,9 @@ static STATUS status = Idle;
 
 // Indicate whether WiFi is ready
 static bool hasWifi = false;
+
+// Indicate whether IoT Hub is ready
+static bool hasIoTHub = false;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Utilities
@@ -281,6 +285,18 @@ void setup()
     return;
   }
   LogTrace("DevKitToneAnalyzerSetup", APP_VERSION);
+
+    // IoT hub
+  Screen.print(3, " > IoT Hub");
+  if (!DevKitMQTTClient_Init())
+  {
+    Screen.clean();
+    Screen.print(0, "DevKitTranslator");
+    Screen.print(2, "No IoT Hub");
+    hasIoTHub = false;
+    return;
+  }
+  hasIoTHub = true;
   
   DevKitMQTTClient_SetMessageCallback(ResultMessageCallback);
 
@@ -299,7 +315,7 @@ void setup()
 
 void loop()
 {
-  if (hasWifi)
+  if (hasWifi && hasIoTHub)
   {
     switch (status)
     {
