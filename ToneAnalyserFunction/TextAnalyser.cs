@@ -32,13 +32,17 @@ namespace ToneAnalyserFunction
 
             // Choose which text analytics service to use
             TextAnalyticsService textAnalyticsService;
-            if (serviceSelected == "TextAnalytics")
+            if (serviceSelected == "SentimentAnalysis")
             {
                 textAnalyticsService = new SentimentAnalysisCognitiveService(MicrosoftSentimentAnalysisApiKey, MicrosoftSentimentAnalysisApiEndpoint);
             }
-            else
+            else if (serviceSelected == "WatsonToneAnalyzer")
             {
                 textAnalyticsService = new IBMWatsonToneAnalyzer(IBMWatsonToneAnalyzerApiKey, IBMWatsonToneAnalyzerApiEndpoint);
+            }
+            else
+            {
+                return new BadRequestObjectResult("You need to pick service");
             }
 
             string requestBody = textAnalyticsService.AnalyseText(textToAnalyse);

@@ -2,17 +2,18 @@
 #include "AZ3166WiFi.h"
 #include "DevKitMQTTClient.h"
 #include "OledDisplay.h"
-#include "SystemTickCounter.h
-#include "azure_config.h"
+#include "SystemTickCounter.h"
 #include "http_client.h"
 
 #define SERVICES_COUNT 2
-#define MAX_RECORD_DURATION 10
+#define MAX_RECORD_DURATION 3.5
 #define MAX_UPLOAD_SIZE (64 * 1024)
 #define LOOP_DELAY 100
 #define PULL_TIMEOUT 30000
 #define AUDIO_BUFFER_SIZE ((32000 * MAX_RECORD_DURATION) - 16000 + 44 + 1)
 #define ERROR_INFO "Sorry, I can't \r\nhear you."
+#define APP_VERSION "ver=2.0"
+#define AZURE_FUNCTION_URL ""
 
 enum STATUS
 {
@@ -74,7 +75,7 @@ static void EnterIdleState(bool clean = true)
   Screen.print(0, "Hold B to talk");
 }
 
-static int HttpTriggerAnalyzer(const char *content, int length)
+static int HttpTriggerToneAnalyzer(const char *content, int length)
 {
   if (content == NULL || length <= 0 || length > MAX_UPLOAD_SIZE)
   {
@@ -82,9 +83,9 @@ static int HttpTriggerAnalyzer(const char *content, int length)
     return -1;
   }
 
-  sprintf(azureFunctionUri, "%s&&source=%s", (char *)AZURE_FUNCTION_URL, allServices);
+  sprintf(azureFunctionUri, "%s&&source=%s", (char *)AZURE_FUNCTION_URL, allServices[currentService]);
   HTTPClient client = HTTPClient(HTTP_POST, azureFunctionUri);
-  client.set_header("source", allServices);
+  client.set_header("source", allServices[currentService]);
   const Http_Response *response = client.send(content, length);
 
   if (response != NULL && response->status_code == 200)
@@ -135,7 +136,7 @@ static void ResultMessageCallback(const char *text, int length)
   temp[end] = '\0';
   Screen.print(1, "Tone: ");
   Screen.print(2, temp, true);
-  LogTrace("DevKitToneAnalyzerSucceed");
+  LogTrace("DevKitToneAnalyzerSucceed", APP_VERSION);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -279,7 +280,7 @@ void setup()
   {
     return;
   }
-  LogTrace("DevKitToneAnalyzerSetup");
+  LogTrace("DevKitToneAnalyzerSetup", APP_VERSION);
   
   DevKitMQTTClient_SetMessageCallback(ResultMessageCallback);
 

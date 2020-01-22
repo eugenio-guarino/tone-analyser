@@ -2,7 +2,6 @@
 using IBM.Watson.ToneAnalyzer.v3;
 using IBM.Watson.ToneAnalyzer.v3.Model;
 
-
 namespace ToneAnalyserFunction
 {
     public class IBMWatsonToneAnalyzer : TextAnalyticsService
