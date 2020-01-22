@@ -160,7 +160,7 @@ static void DoIdle()
     // Enter the Recording mode
     Screen.clean();
     Screen.print(0, "Recording...");
-    Screen.print(1, "Release to send\r\nMax duraion: \r\n1.5 sec");
+    Screen.print(1, "Release to send\r\nMax duration: \r\n3.5 sec");
     memset(waveFile, 0, AUDIO_BUFFER_SIZE);
     Audio.format(8000, 16);
     Audio.startRecord(waveFile, AUDIO_BUFFER_SIZE, MAX_RECORD_DURATION);
