@@ -260,7 +260,7 @@ static void DoSelectService()
 void setup()
 {
   Screen.init();
-  Screen.print(0, "DevKitToneAnalyzer");
+  Screen.print(0, "ToneAnalyzer");
 
   if (strlen(AZURE_FUNCTION_URL) == 0)
   {
@@ -290,7 +290,7 @@ void setup()
   if (!DevKitMQTTClient_Init())
   {
     Screen.clean();
-    Screen.print(0, "DevKitAnalyzer");
+    Screen.print(0, "ToneAnalyzer");
     Screen.print(2, "No IoT Hub");
     hasIoTHub = false;
     return;
