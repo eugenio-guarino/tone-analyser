@@ -7,37 +7,39 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using System.Text;
+using System.IO;
 
 namespace ToneAnalyserFunction
 {
     public static class TextAnalyser
     {
+        const string speechSubscriptionKey = "subkey";
+        const string speechServiceRegion = "uksouth";
+
+        const string IBMWatsonToneAnalyzerApiKey = "apikey";
+        const string IBMWatsonToneAnalyzerApiEndpoint = "apiendpoint";
+
+        const string MicrosoftSentimentAnalysisApiKey = "apikey";
+        const string MicrosoftSentimentAnalysisApiEndpoint = "apiendpoint";
+
+        const string deviceName = "devicename";
+
         [FunctionName("TextAnalyser")]
         public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req, ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            const string speechSubscriptionKey = "";
-            const string speechServiceRegion = "";
-
-            const string IBMWatsonToneAnalyzerApiKey = "";
-            const string IBMWatsonToneAnalyzerApiEndpoint = "";
-
-            const string MicrosoftSentimentAnalysisApiKey = "";
-            const string MicrosoftSentimentAnalysisApiEndpoint = "";
-
-            const string deviceName = "MyNodeDevice";
-
+            Stream speechToAnalyse = req.Body;
             string serviceSelected = req.Query["service"];
-
             // Do speech-to-text conversion
             SpeechCognitiveService speechService = new SpeechCognitiveService(speechSubscriptionKey, speechServiceRegion);
-            string textToAnalyse = await speechService.RecognizeSpeechAsync(req.Body, log);
+            string textToAnalyse = await speechService.RecognizeSpeechAsync(speechToAnalyse, log);
 
             log.LogInformation("Speech-To-Text result: " + textToAnalyse);
 
             // Choose which text analytics service to use
             TextAnalyticsService textAnalyticsService;
+            
             if (serviceSelected == "SentimentAnalysis")
             {
                 textAnalyticsService = new SentimentAnalysisCognitiveService(MicrosoftSentimentAnalysisApiKey, MicrosoftSentimentAnalysisApiEndpoint);
@@ -56,8 +58,7 @@ namespace ToneAnalyserFunction
             log.LogInformation("Analysis result: " + result);
 
             // Send translation result as C2D message
-            string iothubConnectionString = System.Environment.GetEnvironmentVariable("iotHubConnectionString");
-            var serviceClient = ServiceClient.CreateFromConnectionString(iothubConnectionString);
+            var serviceClient = ServiceClient.CreateFromConnectionString("iothubconnectionstring");
             var commandMessage = new Message(Encoding.ASCII.GetBytes(result));
             await serviceClient.SendAsync(deviceName, commandMessage);
 

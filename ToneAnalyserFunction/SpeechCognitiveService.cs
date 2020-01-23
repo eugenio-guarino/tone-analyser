@@ -24,34 +24,36 @@ namespace ToneAnalyserFunction
         {
             var config = SpeechConfig.FromSubscription(subscriptionKey, region);
 
-            using (var audioInput = OpenWavFile(audioStream))
-            using (var recognizer = new SpeechRecognizer(config, audioInput))
-            {
-                Console.WriteLine("Recognizing first result...");
-                var result = await recognizer.RecognizeOnceAsync();
+            var audioConfig = OpenWavFile(audioStream);
 
-                switch (result.Reason)
-                {
-                    case ResultReason.RecognizedSpeech:
-                        return result.Text;
-                    case ResultReason.NoMatch:
-                        log.LogInformation($"NOMATCH: Speech could not be recognized.");
-                        break;
-                    case ResultReason.Canceled:
-                        var cancellation = CancellationDetails.FromResult(result);
-                        log.LogInformation($"CANCELED: Reason={cancellation.Reason}");
+            var recognizer = new SpeechRecognizer(config, audioConfig);
+                
+                    
+                    log.LogInformation("Recognizing first result...");
+                    var result = await recognizer.RecognizeOnceAsync();
 
-                        if (cancellation.Reason == CancellationReason.Error)
-                        {
-                            log.LogInformation($"CANCELED: ErrorCode={cancellation.ErrorCode}");
-                            log.LogInformation($"CANCELED: ErrorDetails={cancellation.ErrorDetails}");
-                            log.LogInformation($"CANCELED: Did you update the subscription info?");
-                        }
-                        break;
-                }
+                    switch (result.Reason)
+                    {
+                        case ResultReason.RecognizedSpeech:
+                            return result.Text;
+                        case ResultReason.NoMatch:
+                            log.LogInformation($"NOMATCH: Speech could not be recognized.");
+                            break;
+                        case ResultReason.Canceled:
+                            var cancellation = CancellationDetails.FromResult(result);
+                            log.LogInformation($"CANCELED: Reason={cancellation.Reason}");
 
-                return "";
-            }
+                            if (cancellation.Reason == CancellationReason.Error)
+                            {
+                                log.LogInformation($"CANCELED: ErrorCode={cancellation.ErrorCode}");
+                                log.LogInformation($"CANCELED: ErrorDetails={cancellation.ErrorDetails}");
+                                log.LogInformation($"CANCELED: Did you update the subscription info?");
+                            }
+                            break;
+                    }
+
+                    return "";
+                
         }
 
 

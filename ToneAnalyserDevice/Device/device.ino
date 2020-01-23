@@ -7,14 +7,14 @@
 #include "http_client.h"
 
 #define SERVICES_COUNT 2
-#define MAX_RECORD_DURATION 3.5
+#define MAX_RECORD_DURATION 2.2
 #define MAX_UPLOAD_SIZE (64 * 1024)
 #define LOOP_DELAY 100
 #define PULL_TIMEOUT 30000
 #define AUDIO_BUFFER_SIZE ((32000 * MAX_RECORD_DURATION) - 16000 + 44 + 1)
 #define ERROR_INFO "Sorry, I can't \r\nhear you."
 #define APP_VERSION "ver=2.0"
-#define AZURE_FUNCTION_URL ""
+#define AZURE_FUNCTION_URL "azurefunctionurl"
 
 enum STATUS
 {
@@ -29,6 +29,7 @@ enum STATUS
 static int wavFileSize;
 static char *waveFile = NULL;
 static char azureFunctionUri[192];
+
 
 // The timeout for retrieving the result
 static uint64_t result_timeout_ms;
@@ -87,9 +88,9 @@ static int HttpTriggerToneAnalyzer(const char *content, int length)
     return -1;
   }
 
-  sprintf(azureFunctionUri, "%s&&source=%s", (char *)AZURE_FUNCTION_URL, allServices[currentService]);
+  sprintf(azureFunctionUri, "%s&&service=%s", (char *)AZURE_FUNCTION_URL, allServices[currentService]);
   HTTPClient client = HTTPClient(HTTP_POST, azureFunctionUri);
-  client.set_header("source", allServices[currentService]);
+  client.set_header("service", allServices[currentService]);
   const Http_Response *response = client.send(content, length);
 
   if (response != NULL && response->status_code == 200)
@@ -113,8 +114,6 @@ static void ShowServices()
   sprintf(temp, "> %s", allServices[(idx + 1) % SERVICES_COUNT]);
   Screen.print(2, temp);
 
-  sprintf(temp, "  %s", allServices[(idx + 2) % SERVICES_COUNT]);
-  Screen.print(3, temp);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -291,7 +290,7 @@ void setup()
   if (!DevKitMQTTClient_Init())
   {
     Screen.clean();
-    Screen.print(0, "DevKitTranslator");
+    Screen.print(0, "DevKitAnalyzer");
     Screen.print(2, "No IoT Hub");
     hasIoTHub = false;
     return;
