@@ -18,15 +18,19 @@ namespace ToneAnalyserFunction
 {
     public static class TextAnalyser
     {
+        // Microsoft Speech Cognitive Service 
         const string speechSubscriptionKey = "";
         const string speechServiceRegion = "";
 
+        // IBM Watson Tone Analyzer Service
         const string IBMWatsonToneAnalyzerApiKey = "";
         const string IBMWatsonToneAnalyzerApiEndpoint = "";
 
+        // Microsoft Sentiment Analysis Cognitive Service
         const string MicrosoftSentimentAnalysisApiKey = "";
         const string MicrosoftSentimentAnalysisApiEndpoint = "";
 
+        // Microsoft Azure IoT Hub
         const string deviceName = "";
         const string connectionString = "";
 
@@ -37,37 +41,34 @@ namespace ToneAnalyserFunction
 
             Stream speechToAnalyse = req.Body;
             string serviceSelected = req.Query["service"];
+
             // Do speech-to-text conversion
             SpeechCognitiveService speechService = new SpeechCognitiveService(speechSubscriptionKey, speechServiceRegion);
             string textToAnalyse = await speechService.RecognizeSpeechAsync(speechToAnalyse, log);
 
             log.LogInformation("Speech-To-Text result: " + textToAnalyse);
 
-            // Choose which text analytics service to use
             TextAnalyticsService textAnalyticsService;
             string result;
-            string tempResult;
             
-            if (serviceSelected == "SentimentAnalysis")
+            if (serviceSelected == "Sentiment")
             {
                 textAnalyticsService = new SentimentAnalysisCognitiveService(MicrosoftSentimentAnalysisApiKey, MicrosoftSentimentAnalysisApiEndpoint);
                 result = textAnalyticsService.AnalyseText(textToAnalyse);
             }
-            else if (serviceSelected == "WatsonToneAnalyzer")
+            else if (serviceSelected == "Emotion")
             {
                 textAnalyticsService = new IBMWatsonToneAnalyzer(IBMWatsonToneAnalyzerApiKey, IBMWatsonToneAnalyzerApiEndpoint);
-                tempResult = textAnalyticsService.AnalyseText(textToAnalyse);
-                log.LogInformation(tempResult);
-                result = DeserializeWatsonToneAnalyzerJSON(tempResult);
+                result = DeserializeWatsonToneAnalyzerJSON(textAnalyticsService.AnalyseText(textToAnalyse));
             }
             else
             {
                 return new BadRequestObjectResult("You need to pick service");
             }
 
-            log.LogInformation("Analysis result: " + result);
+            log.LogInformation(result);
 
-            // Send translation result as C2D message
+            // Send translation result as C2D message to IoT Hub
             var serviceClient = ServiceClient.CreateFromConnectionString(connectionString);
             var commandMessage = new Message(Encoding.ASCII.GetBytes(result));
             await serviceClient.SendAsync(deviceName, commandMessage);
