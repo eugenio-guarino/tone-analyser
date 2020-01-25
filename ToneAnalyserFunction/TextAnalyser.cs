@@ -8,6 +8,10 @@ using Newtonsoft.Json;
 using System.Threading.Tasks;
 using System.Text;
 using System.IO;
+using ToneAnalyserFunction.Models.WatsonToneAnalyser;
+using System.Collections.Generic;
+using MoreLinq;
+using System;
 
 namespace ToneAnalyserFunction
 {
@@ -39,21 +43,22 @@ namespace ToneAnalyserFunction
 
             // Choose which text analytics service to use
             TextAnalyticsService textAnalyticsService;
+            string result;
             
             if (serviceSelected == "SentimentAnalysis")
             {
                 textAnalyticsService = new SentimentAnalysisCognitiveService(MicrosoftSentimentAnalysisApiKey, MicrosoftSentimentAnalysisApiEndpoint);
+                result = textAnalyticsService.AnalyseText(textToAnalyse);
             }
             else if (serviceSelected == "WatsonToneAnalyzer")
             {
                 textAnalyticsService = new IBMWatsonToneAnalyzer(IBMWatsonToneAnalyzerApiKey, IBMWatsonToneAnalyzerApiEndpoint);
+                result = await DeserializeWatsonToneAnalyzerJSON(textAnalyticsService.AnalyseText(textToAnalyse));
             }
             else
             {
                 return new BadRequestObjectResult("You need to pick service");
             }
-
-            string result = textAnalyticsService.AnalyseText(textToAnalyse);
 
             log.LogInformation("Analysis result: " + result);
 
@@ -71,6 +76,20 @@ namespace ToneAnalyserFunction
             {
                 return new BadRequestObjectResult("Failed to analyze speech.");
             }
+        }
+
+        public static async Task<string> DeserializeWatsonToneAnalyzerJSON(string result)
+        {
+            DocumentTone documentTone = JsonConvert.DeserializeObject<DocumentTone>(result);
+
+            List<Tone> tones = documentTone.Tones;
+
+            Tone tone = (Tone)tones.MaxBy(x => x.Score);
+
+            result = tone.ToneName + "" + Math.Round(tone.Score * 100, 2);
+
+            return result;
+            
         }
     }
 }

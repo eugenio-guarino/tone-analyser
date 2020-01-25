@@ -2,8 +2,8 @@
 {
     class Tone
     {
-        double Score { get; set; }
-        string ToneId { get; set; }
-        string ToneName { get; set; }
+        public double Score { get; set; }
+        public string ToneId { get; set; }
+        public string ToneName { get; set; }
     }
 }
