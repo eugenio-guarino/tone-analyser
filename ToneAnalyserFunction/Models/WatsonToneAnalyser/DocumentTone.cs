@@ -2,8 +2,8 @@
 
 namespace ToneAnalyserFunction.Models.WatsonToneAnalyser
 {
-    class DocumentTone
+    public class DocumentTone
     {
-        public List<Tone> Tones { get; set; }
+        public List<Tone> tones { get; set; }
     }
 }

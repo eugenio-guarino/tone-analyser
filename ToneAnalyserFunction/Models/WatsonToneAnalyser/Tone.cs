@@ -1,9 +1,9 @@
 ﻿namespace ToneAnalyserFunction.Models.WatsonToneAnalyser
 {
-    class Tone
+    public class Tone
     {
-        public double Score { get; set; }
-        public string ToneId { get; set; }
-        public string ToneName { get; set; }
+        public double score { get; set; }
+        public string tone_id { get; set; }
+        public string tone_name { get; set; }
     }
 }

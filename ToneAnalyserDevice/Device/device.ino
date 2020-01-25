@@ -13,7 +13,7 @@
 #define PULL_TIMEOUT 30000
 #define AUDIO_BUFFER_SIZE ((32000 * MAX_RECORD_DURATION) - 16000 + 44 + 1)
 #define ERROR_INFO "Sorry, I can't \r\nhear you."
-#define APP_VERSION "ver=2.0"
+#define APP_VERSION "ver=1.0"
 #define AZURE_FUNCTION_URL "azurefunctionurl"
 
 enum STATUS
@@ -39,7 +39,7 @@ static AudioClass &Audio = AudioClass::getInstance();
 
 // AI Service
 static int currentService = 1; 
-static const char *allServices[SERVICES_COUNT] = {"SentimentAnalysis", "WatsonToneAnalyzer"};
+static const char *allServices[SERVICES_COUNT] = {"Sentiment", "Emotion"};
 
 // Indicate the processing status
 static STATUS status = Idle;
@@ -137,7 +137,7 @@ static void ResultMessageCallback(const char *text, int length)
   int end = min(length, sizeof(temp) - 1);
   memcpy(temp, text, end);
   temp[end] = '\0';
-  Screen.print(1, "Tone: ");
+  Screen.print(1, "Analysis result:");
   Screen.print(2, temp, true);
   LogTrace("DevKitToneAnalyzerSucceed", APP_VERSION);
 }
@@ -159,7 +159,7 @@ static void DoIdle()
     // Enter the Recording mode
     Screen.clean();
     Screen.print(0, "Recording...");
-    Screen.print(1, "Release to send\r\nMax duration: \r\n3.5 sec");
+    Screen.print(1, "Release to send\r\nMax duration: \r\n2.2 sec");
     memset(waveFile, 0, AUDIO_BUFFER_SIZE);
     Audio.format(8000, 16);
     Audio.startRecord(waveFile, AUDIO_BUFFER_SIZE, MAX_RECORD_DURATION);

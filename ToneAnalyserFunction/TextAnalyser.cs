@@ -12,21 +12,23 @@ using ToneAnalyserFunction.Models.WatsonToneAnalyser;
 using System.Collections.Generic;
 using MoreLinq;
 using System;
+using System.Linq;
 
 namespace ToneAnalyserFunction
 {
     public static class TextAnalyser
     {
-        const string speechSubscriptionKey = "subkey";
-        const string speechServiceRegion = "uksouth";
+        const string speechSubscriptionKey = "";
+        const string speechServiceRegion = "";
 
-        const string IBMWatsonToneAnalyzerApiKey = "apikey";
-        const string IBMWatsonToneAnalyzerApiEndpoint = "apiendpoint";
+        const string IBMWatsonToneAnalyzerApiKey = "";
+        const string IBMWatsonToneAnalyzerApiEndpoint = "";
 
-        const string MicrosoftSentimentAnalysisApiKey = "apikey";
-        const string MicrosoftSentimentAnalysisApiEndpoint = "apiendpoint";
+        const string MicrosoftSentimentAnalysisApiKey = "";
+        const string MicrosoftSentimentAnalysisApiEndpoint = "";
 
-        const string deviceName = "devicename";
+        const string deviceName = "";
+        const string connectionString = "";
 
         [FunctionName("TextAnalyser")]
         public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req, ILogger log)
@@ -44,6 +46,7 @@ namespace ToneAnalyserFunction
             // Choose which text analytics service to use
             TextAnalyticsService textAnalyticsService;
             string result;
+            string tempResult;
             
             if (serviceSelected == "SentimentAnalysis")
             {
@@ -53,7 +56,9 @@ namespace ToneAnalyserFunction
             else if (serviceSelected == "WatsonToneAnalyzer")
             {
                 textAnalyticsService = new IBMWatsonToneAnalyzer(IBMWatsonToneAnalyzerApiKey, IBMWatsonToneAnalyzerApiEndpoint);
-                result = await DeserializeWatsonToneAnalyzerJSON(textAnalyticsService.AnalyseText(textToAnalyse));
+                tempResult = textAnalyticsService.AnalyseText(textToAnalyse);
+                log.LogInformation(tempResult);
+                result = DeserializeWatsonToneAnalyzerJSON(tempResult);
             }
             else
             {
@@ -63,7 +68,7 @@ namespace ToneAnalyserFunction
             log.LogInformation("Analysis result: " + result);
 
             // Send translation result as C2D message
-            var serviceClient = ServiceClient.CreateFromConnectionString("iothubconnectionstring");
+            var serviceClient = ServiceClient.CreateFromConnectionString(connectionString);
             var commandMessage = new Message(Encoding.ASCII.GetBytes(result));
             await serviceClient.SendAsync(deviceName, commandMessage);
 
@@ -78,18 +83,18 @@ namespace ToneAnalyserFunction
             }
         }
 
-        public static async Task<string> DeserializeWatsonToneAnalyzerJSON(string result)
+        public static string DeserializeWatsonToneAnalyzerJSON(string result)
         {
-            DocumentTone documentTone = JsonConvert.DeserializeObject<DocumentTone>(result);
+            RootObject rootObject = JsonConvert.DeserializeObject<RootObject>(result);
 
-            List<Tone> tones = documentTone.Tones;
+            List<Tone> tones = rootObject.document_tone.tones;
 
-            Tone tone = (Tone)tones.MaxBy(x => x.Score);
+            Tone highestScoringTone = tones.OrderByDescending(item => item.score).First();
 
-            result = tone.ToneName + "" + Math.Round(tone.Score * 100, 2);
+            result = highestScoringTone.tone_name + " " + Math.Round(highestScoringTone.score * 100, 2) + "%";
 
             return result;
-            
+
         }
     }
 }
