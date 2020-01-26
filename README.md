@@ -1,8 +1,9 @@
 # MXChip IoT DevKit Tone Analyzer [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://github.com/feross/standard)
-A tone analyzer application built for the Microsoft Devkit AZ316. It can analyze a registration of your voice to tell you the sentiment or the emotions behind the choice of your words.
+A tone analyzer application built for the Microsoft Devkit AZ316. The app analyses the sentences you record to then come up with an accurate analysis of the tone of your words.
 
-## Motivation
-This project is a little experiment to find out how we can possibly concatenate the different AI services that are available. 
+## How it works
+<img src="Media/diagram.png">
+The IoT DevKit records your voice then posts an HTTP request to trigger an Azure Function. The Azure Function calls the speech-to-text Cognitive Service API to do a transcript of your recording. The function then sends the transcript to an text analysis service of your choice (either the Microsoft's Text Analytics Cognitive service or the IBM's Watson Tone Analyzer). After Azure Functions gets the analysis from the chosen service, it then sends a C2D message to the device through the IoT Hub. Finally the analysis is displayed on the screen.
 
 ## Requirements
 * MXChip IoT DevKit
@@ -22,12 +23,7 @@ This project is a little experiment to find out how we can possibly concatenate 
 * Copy Function endpoint to AZURE_FUNCTION_URL in the DevKit code
 * Upload the device code contained in the ToneAnalyserDevice folder to the DevKit and you are ready to go
 
-## API Reference
-* [Microsoft Text Analytics](https://docs.microsoft.com/en-gb/azure/cognitive-services/text-analytics/)
-* [Microsoft Speech Service](https://docs.microsoft.com/nb-no/azure/cognitive-services/speech-service/)
-* [IBM Watson Tone Analyzer](https://cloud.ibm.com/apidocs/tone-analyzer#introduction)
-
-## How to use?
+## How to use
 #### 1. Press A to change the mode
 <img src="Media/step_1.jpeg" height="320">
 
@@ -42,3 +38,11 @@ This project is a little experiment to find out how we can possibly concatenate 
 
 ## Special thanks
 [Jim Bennet](https://github.com/jimbobbennett) for hosting the [MXChip Workshop](https://github.com/jimbobbennett/MXChip-Workshop) at the University of Plymouth where he introducing me to the IoT DevKit and Azure for the first time.
+
+## Code inspiration
+[IoT DevKit Translator code sample](https://github.com/Azure-Samples/mxchip-iot-devkit-translator/blob/master/Device/DevKitTranslator.ino)
+
+## API Reference
+* [Microsoft Text Analytics](https://docs.microsoft.com/en-gb/azure/cognitive-services/text-analytics/)
+* [Microsoft Speech Service](https://docs.microsoft.com/nb-no/azure/cognitive-services/speech-service/)
+* [IBM Watson Tone Analyzer](https://cloud.ibm.com/apidocs/tone-analyzer#introduction)
