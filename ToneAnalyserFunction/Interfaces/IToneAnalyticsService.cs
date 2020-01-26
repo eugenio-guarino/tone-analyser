@@ -1,6 +1,6 @@
 ﻿namespace ToneAnalyserFunction
 {
-    interface ITextAnalyticsService
+    interface IToneAnalyticsService
     {
         public string ApiKey { get; set; }
         public string ApiEndpoint { get; set; }

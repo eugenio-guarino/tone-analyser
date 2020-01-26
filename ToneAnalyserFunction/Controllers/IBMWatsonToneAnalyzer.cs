@@ -9,7 +9,7 @@ using ToneAnalyserFunction.Models.WatsonToneAnalyser;
 
 namespace ToneAnalyserFunction
 {
-    public class IBMWatsonToneAnalyzer : ITextAnalyticsService
+    public class IBMWatsonToneAnalyzer : IToneAnalyticsService
     {
         public string ApiKey { get ; set ; }
         public string ApiEndpoint { get ; set ; }
@@ -41,9 +41,9 @@ namespace ToneAnalyserFunction
 
             Tone highestScoringTone = tones.OrderByDescending(item => item.score).First();
 
-            result = highestScoringTone.tone_name + " " + Math.Round(highestScoringTone.score * 100, 2) + "%";
+            string deserializedResult = highestScoringTone.tone_name + " " + Math.Round(highestScoringTone.score * 100, 2) + "%";
 
-            return result;
+            return deserializedResult;
 
         }
     }

@@ -14,7 +14,7 @@
 #define AUDIO_BUFFER_SIZE ((32000 * MAX_RECORD_DURATION) - 16000 + 44 + 1)
 #define ERROR_INFO "Sorry, I can't \r\nhear you."
 #define APP_VERSION "ver=1.0"
-#define AZURE_FUNCTION_URL "azurefunctionurl"
+#define AZURE_FUNCTION_URL ""
 
 enum STATUS
 {
@@ -109,10 +109,10 @@ static void ShowServices()
 
   int idx = (currentService + SERVICES_COUNT - 1) % SERVICES_COUNT;
   sprintf(temp, "  %s", allServices[idx]);
-  Screen.print(1, temp);
+  Screen.print(2, temp);
 
   sprintf(temp, "> %s", allServices[(idx + 1) % SERVICES_COUNT]);
-  Screen.print(2, temp);
+  Screen.print(3, temp);
 
 }
 
@@ -129,7 +129,7 @@ static void ResultMessageCallback(const char *text, int length)
   EnterIdleState();
   if (text == NULL)
   {
-    Screen.print(1, ERROR_INFO);
+    Screen.print(2, ERROR_INFO);
     return;
   }
 
@@ -137,8 +137,8 @@ static void ResultMessageCallback(const char *text, int length)
   int end = min(length, sizeof(temp) - 1);
   memcpy(temp, text, end);
   temp[end] = '\0';
-  Screen.print(1, "Analysis result:");
-  Screen.print(2, temp, true);
+  Screen.print(2, "You sounded");
+  Screen.print(3, temp, true);
   LogTrace("DevKitToneAnalyzerSucceed", APP_VERSION);
 }
 
@@ -151,7 +151,7 @@ static void DoIdle()
     // Enter Select Service mode
     status = SelectService;
     Screen.clean();
-    Screen.print(0, "Press B Scroll");
+    Screen.print(0, "Press B: Change");
     ShowServices();
   }
   else if (digitalRead(USER_BUTTON_B) == LOW)
@@ -193,8 +193,8 @@ static void DoRecorded()
     {
       status = WavReady;
       Screen.clean();
-      Screen.print(0, "Processing...");
-      Screen.print(1, "Uploading...");
+      Screen.print(0, "Processing request");
+      Screen.print(2, "Please wait");
     }
   }
   else
@@ -309,7 +309,9 @@ void setup()
     return;
   }
 
-  Screen.print(1, "Talk:   Hold  B\r\n \r\nSetting:Press A");
+  Screen.print(1, " ");
+  Screen.print(2, "Hold  B:   Talk");
+  Screen.print(3, "Press A:   Mode");
 }
 
 void loop()

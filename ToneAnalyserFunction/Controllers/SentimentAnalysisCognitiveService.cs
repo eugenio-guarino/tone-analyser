@@ -3,7 +3,7 @@ using ToneAnalyserFunction.Models.SentimentAnalysis;
 
 namespace ToneAnalyserFunction
 {
-    class SentimentAnalysisCognitiveService : ITextAnalyticsService
+    class SentimentAnalysisCognitiveService : IToneAnalyticsService
     {
         public string ApiKey { get ; set ; }
         public string ApiEndpoint { get ; set ; }
@@ -18,11 +18,17 @@ namespace ToneAnalyserFunction
 
             var result = client.Sentiment(text, "en");
 
-            double? score = result.Score;
+            string convertedResult;
 
-            string analysisResult = (score != null) ? score.ToString() : "error";
+            // This will be changed when the new Text Analytics Client Library v3 comes out from pre-release
+            if (result.Score >= 0.60)
+                convertedResult = "Positive :-)";
+            else if (result.Score >= 0.45)
+                convertedResult = "Neutral :-|";
+            else
+                convertedResult = "Negative :-(";
 
-            return analysisResult;
+            return convertedResult;
         }
     }
 }

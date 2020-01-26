@@ -14,19 +14,19 @@ namespace ToneAnalyserFunction
     {
         // Microsoft Speech Cognitive Service 
         const string speechSubscriptionKey = "";
-        const string speechServiceRegion = "";
+        const string speechServiceRegion = "uksouth";
 
         // IBM Watson Tone Analyzer Service
         const string IBMWatsonToneAnalyzerApiKey = "";
         const string IBMWatsonToneAnalyzerApiEndpoint = "";
 
-        // Microsoft Sentiment Analysis Cognitive Service
+        // Microsoft Text Analytics Cognitive Service
         const string MicrosoftSentimentAnalysisApiKey = "";
         const string MicrosoftSentimentAnalysisApiEndpoint = "";
 
         // Microsoft Azure IoT Hub
-        const string deviceName = "";
-        const string connectionString = "";
+        const string deviceName = "MyNodeDevice";
+        const string connectionString = "HostName=;SharedAccessKeyName=;SharedAccessKey=";
 
         [FunctionName("TextAnalyser")]
         public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req, ILogger log)
@@ -39,26 +39,19 @@ namespace ToneAnalyserFunction
             // Do speech-to-text conversion
             SpeechCognitiveService speechService = new SpeechCognitiveService(speechSubscriptionKey, speechServiceRegion);
             string textToAnalyse = await speechService.RecognizeSpeechAsync(speechToAnalyse, log);
-
             log.LogInformation("Speech-To-Text result: " + textToAnalyse);
 
-            ITextAnalyticsService textAnalyticsService;
+            IToneAnalyticsService textAnalyticsService;
             
             if (serviceSelected == "Sentiment")
-            {
                 textAnalyticsService = new SentimentAnalysisCognitiveService { ApiKey = MicrosoftSentimentAnalysisApiKey, ApiEndpoint = MicrosoftSentimentAnalysisApiEndpoint};
-            }
             else if (serviceSelected == "Emotion")
-            {
                 textAnalyticsService = new IBMWatsonToneAnalyzer { ApiKey = IBMWatsonToneAnalyzerApiKey, ApiEndpoint = IBMWatsonToneAnalyzerApiEndpoint};               
-            }
             else
-            {
                 return new BadRequestObjectResult("You need to pick service");
-            }
-
+            
+            // Retrieve result from the selected service's analysis
             string result = textAnalyticsService.AnalyseText(textToAnalyse);
-
             log.LogInformation(result);
 
             // Send translation result as C2D message to IoT Hub
