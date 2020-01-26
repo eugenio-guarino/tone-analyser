@@ -1,6 +1,5 @@
-﻿using System.Net.Http;
-using System.Text;
-using Newtonsoft.Json;
+﻿using Microsoft.Azure.CognitiveServices.Language.TextAnalytics;
+using ToneAnalyserFunction.Models.SentimentAnalysis;
 
 namespace ToneAnalyserFunction
 {
@@ -17,20 +16,19 @@ namespace ToneAnalyserFunction
 
         public override string AnalyseText(string text)
         {
-            HttpClient client = new HttpClient();
-
-            var requestData = new StringContent(JsonConvert.SerializeObject( new { language = "en", id = 1, text = text }), Encoding.UTF8, "application/json");
-            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
-            client.DefaultRequestHeaders.Add("Accept", "application/json");
-
-            var response = client.PostAsync(endpoint, requestData);
-            if (response.Result.Content != null)
+            ApiKeyServiceCredentials credentials = new ApiKeyServiceCredentials(subscriptionKey);
+            TextAnalyticsClient client = new TextAnalyticsClient(credentials)
             {
-                var responseContent = response.Result.Content.ReadAsStringAsync();
+                Endpoint = endpoint
+            };
 
-                return responseContent.ToString();
-            }
-            return "";
+            var result = client.Sentiment(text, "en");
+
+            double? score = result.Score;
+
+            string analysisResult = (score != null) ? score.ToString() : "error";
+
+            return analysisResult;
         }
     }
 }
