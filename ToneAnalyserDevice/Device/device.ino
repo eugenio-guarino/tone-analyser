@@ -193,7 +193,7 @@ static void DoRecorded()
     {
       status = WavReady;
       Screen.clean();
-      Screen.print(0, "Processing request");
+      Screen.print(0, "Processing...");
       Screen.print(2, "Please wait");
     }
   }
