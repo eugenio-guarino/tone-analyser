@@ -16,12 +16,12 @@ The IoT DevKit records your voice then posts an HTTP request to trigger an Azure
 * [Configure the MXChip board](https://github.com/jimbobbennett/MXChip-Workshop/blob/master/Steps/ConfigureTheBoard.md) 
 * [Configure Visual Studio Code](https://github.com/jimbobbennett/MXChip-Workshop/blob/master/Steps/ConfigureVSCode.md)
 * [Connect IoT DevKit AZ3166 to Azure IoT Hub](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-arduino-iot-devkit-az3166-get-started)
-* Set up the Speech and Text Analytics Cognitive Services
-* Set up the [IBM Watson Tone Analyzer](https://www.ibm.com/watson/services/tone-analyzer/)
-* You will need to create a Function App on your Azure and publish the ToneAnalyserFunction of this repo
-* Copy personal connection strings and API keys from the services to the Azure Function application main class
-* Copy Function endpoint to AZURE_FUNCTION_URL in the DevKit code
-* Upload the device code contained in the ToneAnalyserDevice folder to the DevKit and you are ready to go
+* Make sure you create the resources in Azure for the Speech and Text Analytics Cognitive Services
+* Set up the [Watson Tone Analyzer] service on IBM Cloud(https://www.ibm.com/watson/services/tone-analyzer/)
+* Copy your personal API endpoints and keys of the services you created to the ToneAnalyserFunction app
+* Publish the ToneAnalyserFunction app
+* Get ToneAnalyserFunction endpoint and copy it to "AZURE_FUNCTION_URL" in the ToneAnalyserDevice's arduino code
+* Upload the ToneAnalyserDevice's arduino code to the MXChip board
 
 ## How to use
 #### 1. Press A to change the mode
@@ -37,7 +37,7 @@ The IoT DevKit records your voice then posts an HTTP request to trigger an Azure
 <img src="Media/step_4.jpeg" height="320">
 
 ## Special thanks
-[Jim Bennet](https://github.com/jimbobbennett) for hosting the [MXChip Workshop](https://github.com/jimbobbennett/MXChip-Workshop) at the University of Plymouth where he introducing me to the IoT DevKit and Azure for the first time.
+[Jim Bennet](https://github.com/jimbobbennett) for hosting the [MXChip Workshop](https://github.com/jimbobbennett/MXChip-Workshop) at the University of Plymouth in which he introduced me to the IoT DevKit and Microsoft Azure for the very first time.
 
 ## References
 * [Microsoft Text Analytics](https://docs.microsoft.com/en-gb/azure/cognitive-services/text-analytics/)
