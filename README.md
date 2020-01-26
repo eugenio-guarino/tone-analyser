@@ -39,10 +39,8 @@ The IoT DevKit records your voice then posts an HTTP request to trigger an Azure
 ## Special thanks
 [Jim Bennet](https://github.com/jimbobbennett) for hosting the [MXChip Workshop](https://github.com/jimbobbennett/MXChip-Workshop) at the University of Plymouth where he introducing me to the IoT DevKit and Azure for the first time.
 
-## Code inspiration
-[IoT DevKit Translator code sample](https://github.com/Azure-Samples/mxchip-iot-devkit-translator/blob/master/Device/DevKitTranslator.ino)
-
-## API Reference
+## References
 * [Microsoft Text Analytics](https://docs.microsoft.com/en-gb/azure/cognitive-services/text-analytics/)
 * [Microsoft Speech Service](https://docs.microsoft.com/nb-no/azure/cognitive-services/speech-service/)
 * [IBM Watson Tone Analyzer](https://cloud.ibm.com/apidocs/tone-analyzer#introduction)
+* Code inspiration: [IoT DevKit Translator](https://github.com/Azure-Samples/mxchip-iot-devkit-translator/blob/master/Device/DevKitTranslator.ino)
