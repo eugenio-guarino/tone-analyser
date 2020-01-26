@@ -16,8 +16,7 @@ namespace ToneAnalyserFunction
         public SpeechCognitiveService(string speechSubscriptionKey, string serviceRegion)
         {
             this.subscriptionKey = speechSubscriptionKey;
-            this.region = serviceRegion;
-          
+            this.region = serviceRegion;       
         }
 
         public async Task<string> RecognizeSpeechAsync(Stream audioStream, ILogger log)

@@ -4,15 +4,9 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.Devices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System.Threading.Tasks;
 using System.Text;
 using System.IO;
-using ToneAnalyserFunction.Models.WatsonToneAnalyser;
-using System.Collections.Generic;
-using MoreLinq;
-using System;
-using System.Linq;
 
 namespace ToneAnalyserFunction
 {
@@ -48,23 +42,22 @@ namespace ToneAnalyserFunction
 
             log.LogInformation("Speech-To-Text result: " + textToAnalyse);
 
-            TextAnalyticsService textAnalyticsService;
-            string result;
+            ITextAnalyticsService textAnalyticsService;
             
             if (serviceSelected == "Sentiment")
             {
-                textAnalyticsService = new SentimentAnalysisCognitiveService(MicrosoftSentimentAnalysisApiKey, MicrosoftSentimentAnalysisApiEndpoint);
-                result = textAnalyticsService.AnalyseText(textToAnalyse);
+                textAnalyticsService = new SentimentAnalysisCognitiveService { ApiKey = MicrosoftSentimentAnalysisApiKey, ApiEndpoint = MicrosoftSentimentAnalysisApiEndpoint};
             }
             else if (serviceSelected == "Emotion")
             {
-                textAnalyticsService = new IBMWatsonToneAnalyzer(IBMWatsonToneAnalyzerApiKey, IBMWatsonToneAnalyzerApiEndpoint);
-                result = DeserializeWatsonToneAnalyzerJSON(textAnalyticsService.AnalyseText(textToAnalyse));
+                textAnalyticsService = new IBMWatsonToneAnalyzer { ApiKey = IBMWatsonToneAnalyzerApiKey, ApiEndpoint = IBMWatsonToneAnalyzerApiEndpoint};               
             }
             else
             {
                 return new BadRequestObjectResult("You need to pick service");
             }
+
+            string result = textAnalyticsService.AnalyseText(textToAnalyse);
 
             log.LogInformation(result);
 
@@ -84,18 +77,6 @@ namespace ToneAnalyserFunction
             }
         }
 
-        public static string DeserializeWatsonToneAnalyzerJSON(string result)
-        {
-            RootObject rootObject = JsonConvert.DeserializeObject<RootObject>(result);
 
-            List<Tone> tones = rootObject.document_tone.tones;
-
-            Tone highestScoringTone = tones.OrderByDescending(item => item.score).First();
-
-            result = highestScoringTone.tone_name + " " + Math.Round(highestScoringTone.score * 100, 2) + "%";
-
-            return result;
-
-        }
     }
 }
