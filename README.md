@@ -37,7 +37,7 @@ The IoT DevKit records your voice then posts an HTTP request to trigger an Azure
 <img src="Media/step_4.jpeg" height="320">
 
 ## Special thanks
-[Jim Bennet](https://github.com/jimbobbennett) for hosting the [MXChip Workshop](https://github.com/jimbobbennett/MXChip-Workshop) at the University of Plymouth in which he introduced me to the IoT DevKit and Microsoft Azure for the very first time.
+[Jim Bennett](https://github.com/jimbobbennett) for hosting the [MXChip Workshop](https://github.com/jimbobbennett/MXChip-Workshop) at the University of Plymouth in which he introduced me to the IoT DevKit and Microsoft Azure for the very first time.
 
 ## References
 * [Microsoft Text Analytics](https://docs.microsoft.com/en-gb/azure/cognitive-services/text-analytics/)
