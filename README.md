@@ -36,6 +36,12 @@ The IoT DevKit records your voice then posts an HTTP request to trigger an Azure
 #### 4. Wait for the result
 <img src="Media/step_4.jpeg" height="320">
 
+## Known issues
+Unfortunately the software is able to record a bit more than two seconds worth of audio. This is due to the limited memory of the IoT Devkit AZ316.
+
+## Contribute
+Feel free to create PRs for this repo if you have any code suggestion!
+
 ## Special thanks
 [Jim Bennett](https://github.com/jimbobbennett) for hosting the [MXChip Workshop](https://github.com/jimbobbennett/MXChip-Workshop) at the University of Plymouth in which he introduced me to the IoT DevKit and Microsoft Azure for the very first time.
 
